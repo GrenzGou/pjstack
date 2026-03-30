@@ -1,5 +1,5 @@
 -  name: ALL Environment
-   hosts: all
+   hosts: manager
    become: true
    gather_facts: true
    vars:
