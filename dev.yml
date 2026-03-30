@@ -1,5 +1,5 @@
 -  name: ALL Environment
-   hosts: manager
+   hosts: manager,database_staging,database_ods_clickhouse
    become: true
    gather_facts: true
    vars:
