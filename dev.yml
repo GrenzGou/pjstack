@@ -14,15 +14,15 @@
       run_once: true
       when: lvm == 1
 
-    - name: Ownership folder to user
-      ansible.builtin.file:
-        path: "{{item}}"
-        state: directory
-        recurse: yes
-        owner: "{{ ansible_user }}"
-      with_items:
-        - "{{log_path}}"
-        - "{{local_path}}"
+#    - name: Ownership folder to user
+#      ansible.builtin.file:
+#        path: "{{item}}"
+#        state: directory
+#        recurse: yes
+#        owner: "{{ ansible_user }}"
+#      with_items:
+#        - "{{log_path}}"
+#        - "{{local_path}}"
 
 #    - name: "Enable lingering for user"
 #      ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
