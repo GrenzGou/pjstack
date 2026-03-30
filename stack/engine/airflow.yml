@@ -325,7 +325,7 @@
 - name: "Airflow Install Plugins"
   containers.podman.podman_container_exec:
     name: "{{item}}"
-    command: "pip install {{ airflow_plugins }}"
+    command: "bash -c \"pip install {{ airflow_plugins }}\""
   when: init == 1
   with_items:
      - airflow-worker
