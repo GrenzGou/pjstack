@@ -87,7 +87,7 @@
     healthcheck_start_period: "5s"
     network: "{{podman_network}}"
     volumes:
-      - "{{local_path}}/airflow/postgres:/var/lib/postgresql:z"
+      - "airflow-postgres:/var/lib/postgresql:z"
 
 
 - name: "--PODMAN-- Airflow Init"
