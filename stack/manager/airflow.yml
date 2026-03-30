@@ -262,6 +262,7 @@
 - name: "Airflow Install Plugins"
   containers.podman.podman_container_exec:
     name: airflow-webserver
+    user: 50000
     command: "{{item}}"
   when: init == 1
   with_items:
