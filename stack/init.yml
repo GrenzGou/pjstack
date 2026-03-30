@@ -50,3 +50,9 @@
     name: hidden
     data: "{{ passwd_string }}"
 
+
+- name: Login to quay.io and create ${XDG_RUNTIME_DIR}/containers/auth.json
+  containers.podman.podman_login:
+    username: Asta_Protek_Jiarsi@3000620680
+    password: 'Remnant%Liniment;15'
+    registry: dwh-ap-southeast-3.cr.bytepluses.com
