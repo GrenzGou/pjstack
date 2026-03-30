@@ -15,17 +15,17 @@
     msg: "{{dnf_install}}"
 
 
-- name: "APPLICATION [SYSTEMD] Cockpit Enable"
-  run_once: true
-  ansible.builtin.systemd_service:
-    name: "{{item}}"
-    enabled: true
-    state: started
-    force: true
-    masked: no
-  with_items:
-    - podman
-    - nfs-server
+#- name: "APPLICATION [SYSTEMD] Cockpit Enable"
+#  run_once: true
+#  ansible.builtin.systemd_service:
+#    name: "{{item}}"
+#   enabled: true
+#    state: started
+#    force: true
+#    masked: no
+#  with_items:
+#    - podman
+#    - nfs-server
 
 
 - name: "[DIRECTORY] Create Default Container & Logs"
@@ -36,12 +36,12 @@
     - "{{log_path}}"
     - "{{local_path}}"
 
-- name: Create a podman network
-  become_user: "{{ ansible_user }}"
-  containers.podman.podman_network:
-    name: "{{podman_network}}"
-    recreate: true
-    force: true
+#- name: Create a podman network
+#  become_user: "{{ ansible_user }}"
+#  containers.podman.podman_network:
+#    name: "{{podman_network}}"
+#    recreate: true
+#    force: true
 
 - name: Create secret
   become_user: "{{ ansible_user }}"
