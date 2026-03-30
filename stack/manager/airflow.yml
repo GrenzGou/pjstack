@@ -264,26 +264,26 @@
     name: airflow-webserver
     command: "{{item}}"
   when: init == 1
-  with_items:
+ with_items:
     - "bash -c \"pip install {{ airflow_plugins }}\""
 
-- name: "Airflow Migrate/"
-  containers.podman.podman_container_exec:
-    name: airflow-webserver
-    command: 'airflow db migrate'
-  when: init == 1
+# - name: "Airflow Migrate/"
+#   containers.podman.podman_container_exec:
+#     name: airflow-webserver
+#     command: 'airflow db migrate'
+#   when: init == 1
 
-- name: "Airflow Import Variables"
-  containers.podman.podman_container_exec:
-    name: airflow-webserver
-    command: 'airflow variables import ./config/variables.json'
-  when: init == 1
+# - name: "Airflow Import Variables"
+#  containers.podman.podman_container_exec:
+#    name: airflow-webserver
+#    command: 'airflow variables import ./config/variables.json'
+#  when: init == 1
 
-- name: "Airflow Import Connections"
-  containers.podman.podman_container_exec:
-    name: airflow-webserver
-    command: 'airflow connections import ./config/connections.json'
-  when: init == 1
+#- name: "Airflow Import Connections"
+#  containers.podman.podman_container_exec:
+#    name: airflow-webserver
+#    command: 'airflow connections import ./config/connections.json'
+#  when: init == 1
 
 
 #- name: "Setting NFS"
