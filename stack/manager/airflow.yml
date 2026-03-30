@@ -119,7 +119,7 @@
       _AIRFLOW_WWW_USER_USERNAME: 'airflow'
       _AIRFLOW_WWW_USER_PASSWORD: 'confidential'
       _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }} apache-airflow-fab-auth-manager"
-      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.FabAuthManager
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-webserver:8080/execution/'
     volumes:
       #      - "{{local_path}}/airflow:/sources:z"
