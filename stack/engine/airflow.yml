@@ -109,8 +109,8 @@
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
       #      AIRFLOW__OPENLINEAGE__TRANSPORT: "{\"type\": \"http\", \"url\": \"http://{{host_dwh_manager}}:{{marquez_port}}\", \"endpoint\": \"api/v1/lineage\"}"
       #      AIRFLOW__OPENLINEAGE__NAMESPACE: 'dwh'
-      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }} apache-airflow-fab-auth-manager"
-      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }}"
+      AIRFLOW__CORE__AUTH_MANAGER: "airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager"
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://{{host_dwh_manager}}:{{app_airflow_port}}/execution/'
     #      OPENLINEAGE_URL: http://dwh-manager:9911
     #      OPENLINEAGE_NAMESPACE: dwh
@@ -164,8 +164,8 @@
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
       #      AIRFLOW__OPENLINEAGE__TRANSPORT: "{\"type\": \"http\", \"url\": \"http://{{host_dwh_manager}}:{{marquez_port}}\", \"endpoint\": \"api/v1/lineage\"}"
       #      AIRFLOW__OPENLINEAGE__NAMESPACE: 'dwh'
-      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }} apache-airflow-fab-auth-manager"
-      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }}"
+      AIRFLOW__CORE__AUTH_MANAGER: "airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager"
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://{{host_dwh_manager}}:{{app_airflow_port}}/execution/'
     #      OPENLINEAGE_URL: http://dwh-manager:9911
     #      OPENLINEAGE_NAMESPACE: dwh
@@ -220,8 +220,8 @@
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
       #      AIRFLOW__OPENLINEAGE__TRANSPORT: "{\'type\': \'http\', \"url\": \"http://{{host_dwh_manager}}:{{marquez_port}}\", \"endpoint\": \"api/v1/lineage\"}"
       AIRFLOW__OPENLINEAGE__NAMESPACE: 'dwh'
-      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }} apache-airflow-fab-auth-manager"
-      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }}"
+      AIRFLOW__CORE__AUTH_MANAGER: "airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager"
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://{{host_dwh_manager}}:{{app_airflow_port}}/execution/'
       OPENLINEAGE_URL: http://dwh-manager:9911
       OPENLINEAGE_NAMESPACE: dwh
@@ -275,8 +275,8 @@
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
       #      AIRFLOW__OPENLINEAGE__TRANSPORT: "{ \"type\": \"http \", \"url\": \"http://{{host_dwh_manager}}:{{marquez_port}}\",  \"endpoint\":  \"api/v1/lineage\"}"
       #      AIRFLOW__OPENLINEAGE__NAMESPACE: 'dwh'
-      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }} apache-airflow-fab-auth-manager"
-      AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+      _PIP_ADDITIONAL_REQUIREMENTS: "{{ airflow_plugins }}"
+      AIRFLOW__CORE__AUTH_MANAGER: "airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager"
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://{{host_dwh_manager}}:{{app_airflow_port}}/execution/'
     #      OPENLINEAGE_URL: http://dwh-manager:9911
     #      OPENLINEAGE_NAMESPACE: dwh
