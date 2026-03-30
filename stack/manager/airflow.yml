@@ -264,7 +264,7 @@
     name: airflow-webserver
     command: "{{item}}"
   when: init == 1
- with_items:
+  with_items:
     - "bash -c \"pip install {{ airflow_plugins }}\""
 
 # - name: "Airflow Migrate/"
