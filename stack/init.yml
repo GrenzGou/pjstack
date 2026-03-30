@@ -9,7 +9,7 @@
       - podman
       - nfs-utils
       - python-pip
-  state: latest
+    state: latest
   register: dnf_install
 - debug:
     msg: "{{dnf_install}}"
