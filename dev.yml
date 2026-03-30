@@ -1,95 +1,43 @@
+
 -  name: ALL Environment
    hosts: manager,database_staging,database_ods_clickhouse
    become: true
    gather_facts: true
    vars:
-     init: 0
-   tasks:
-    # Initialize
-    - name: --Initialize-- Server
-      ansible.builtin.include_tasks: "stack/init.yml"
-
-    - name: --Initialize-- LVM Partition
-      ansible.builtin.include_tasks: "stack/lvm.yml"
-      run_once: true
-      when: lvm == 1
-
-#    - name: Ownership folder to user
-#      ansible.builtin.file:
-#        path: "{{item}}"
-#        state: directory
-#        recurse: yes
-#        owner: "{{ ansible_user }}"
-#      with_items:
-#        - "{{log_path}}"
-#        - "{{local_path}}"
-
-#    - name: "Enable lingering for user"
-#      ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
-#      become: true
-#      become_user: "{{ ansible_user }}"
-
-
-- name: Manager Environment
-  hosts: manager
-  become: true
-  gather_facts: true
-  become_user: "{{ ansible_user }}"
-  vars:
-    pod_name: 'manager'
-  tasks:
-    - name: --Initialize-- Certificate
-      ansible.builtin.include_tasks: "stack/certificate.yml"
-
-    - name: --Initialize-- Warpgate
-      ansible.builtin.include_tasks: "stack/security/wg.yml"
-
-    - name: --Initialize-- Airflow Manager
-      ansible.builtin.include_tasks: "stack/manager/airflow.yml"
-
-    - name: --Initialize-- Airflow Engine
-      ansible.builtin.include_tasks: "stack/engine/airflow.yml"
-
-
--  name: ALL Environment
-   hosts: all
-   become: true
-   gather_facts: true
-   vars:
      tasks:
-        - name: "--PODMAN-- SSL Directory"
-          run_once: true
-          ansible.builtin.file:
-            path: "{{ item.path }}"
-            state: directory
-            mode: "{{ item.mode }}"
-          with_items:
-            - { path: "{{local_path}}/ssl/", mode: '0775' }
+       - name: "--PODMAN-- SSL Directory"
+         run_once: true
+         ansible.builtin.file:
+           path: "{{ item.path }}"
+           state: directory
+           mode: "{{ item.mode }}"
+         with_items:
+           - { path: "{{local_path}}/ssl/", mode: '0775' }
 
-        - name: Mount an NFS volume
-          become: true
-          become_user: root
-          ansible.posix.mount:
-            src: "{{host_dwh_manager}}:{{item.path}}"
-            path: "{{item.path}}"
-            opts: rw,sync,hard
-            state: mounted
-            fstype: nfs
-          with_items:
-            - { path: "{{local_path}}/ssl" }
-          ignore_errors: true
+       - name: Mount an NFS volume
+         become: true
+         become_user: root
+         ansible.posix.mount:
+           src: "{{host_dwh_manager}}:{{item.path}}"
+           path: "{{item.path}}"
+           opts: rw,sync,hard
+           state: mounted
+           fstype: nfs
+         with_items:
+           - { path: "{{local_path}}/ssl" }
+         ignore_errors: true
 
-        - name: Change permission
-          ansible.builtin.file:
-            path: "{{item.path}}"
-            mode: '0664'
-          with_items:
-            - { path: "{{local_path}}/ssl/ca-cert.pem" }
-            - { path: "{{local_path}}/ssl/ca.csr" }
-            - { path: "{{local_path}}/ssl/ca-key.pem" }
-            - { path: "{{local_path}}/ssl/server-cert.pem" }
-            - { path: "{{local_path}}/ssl/server.csr" }
-            - { path: "{{local_path}}/ssl/server-key.pem" }
+       - name: Change permission
+         ansible.builtin.file:
+           path: "{{item.path}}"
+           mode: '0664'
+         with_items:
+           - { path: "{{local_path}}/ssl/ca-cert.pem" }
+           - { path: "{{local_path}}/ssl/ca.csr" }
+           - { path: "{{local_path}}/ssl/ca-key.pem" }
+           - { path: "{{local_path}}/ssl/server-cert.pem" }
+           - { path: "{{local_path}}/ssl/server.csr" }
+           - { path: "{{local_path}}/ssl/server-key.pem" }
 
 
 - name: Postgres Environment
