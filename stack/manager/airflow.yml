@@ -73,6 +73,7 @@
     image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/postgres:18
     recreate: true
     timezone: "local"
+    user: "1000:1000"
     env:
       AIRFLOW_UID: "1000"
       POSTGRES_USER: airflow
