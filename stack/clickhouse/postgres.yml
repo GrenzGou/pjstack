@@ -16,6 +16,7 @@
     - { path: "{{log_path}}/pg_citus" }
 
 - name: Copy file with owner and permissions
+  become: true
   ansible.builtin.copy:
     src: "{{local_path}}/ssl/{{item.path}}"
     dest: "{{local_path}}/ssl/postgres/{{item.path}}"
