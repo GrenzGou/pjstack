@@ -30,6 +30,7 @@
       - "{{local_path}}/pg_clickhouse/files:/files:z"
     network: "{{podman_network}}"
     command:
+      - postgres
       - -c ssl=on
       - -c ssl_cert_file=/files/server-cert.pem
       - -c ssl_key_file=/files/server-key.pem
@@ -50,6 +51,7 @@
       - "{{local_path}}/pg_citus/files:/files:z"
     network: "{{podman_network}}"
     command:
+      - postgres
       - -c ssl=on
       - -c ssl_cert_file=/files/server-cert.pem
       - -c ssl_key_file=/files/server-key.pem
