@@ -21,7 +21,7 @@
     state: started
     restart_policy: always
     ports:
-      - "8{{staging_port}}:5432"
+      - "2{{staging_port}}:5432"
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
@@ -41,7 +41,7 @@
     state: started
     restart_policy: always
     ports:
-      - "8{{citus_port}}:5432"
+      - "2{{citus_port}}:5432"
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
