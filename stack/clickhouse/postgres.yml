@@ -69,7 +69,7 @@
       - "{{local_path}}/pg_citus/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
-      - "{{local_path}}/ssl/postgres:/ssl:z"
+      - "{{local_path}}/ssl/citus:/ssl:z"
     network: "{{podman_network}}"
     command:
       - "postgres"
