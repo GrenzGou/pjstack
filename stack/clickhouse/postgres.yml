@@ -27,34 +27,6 @@
 #    - { path: "server-cert.pem" }
 #    - { path: "server-key.pem" }
 
-- name: Run pg_clickhouse container
-  containers.podman.podman_container:
-    name: pg_clickhouse
-    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/pg_clickhouse:18
-    state: started
-    restart_policy: always
-    ports:
-      - "2{{staging_port}}:5432"
-    env:
-      POSTGRES_PASSWORD: "confidential"
-    volumes:
-      - "{{local_path}}/pg_clickhouse/data:/var/lib/postgresql:z"
-      # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
-      - "{{local_path}}/pg_clickhouse/files:/files:z"
-      - "{{local_path}}/ssl/postgres:/ssl:z"
-    network: "{{podman_network}}"
-    command:
-      - "postgres"
-      - "-c"
-      - "wal_level=replica"
-      - "-c"
-      - "ssl=on"
-      - "-c"
-      - "ssl_cert_file=/ssl/server-cert.pem"
-      - "-c"
-      - "ssl_key_file=/ssl/server-key.pem"
-
-
 - name: Run pg_citus container
   containers.podman.podman_container:
     name: pg_citus
@@ -86,6 +58,6 @@
 
 - name: Create pg_clickhouse extension
   containers.podman.podman_container_exec:
-    name: pg_clickhouse
+    name: pg_citus
     command: >
       psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_clickhouse;"
