@@ -29,7 +29,7 @@
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_clickhouse/files:/files:z"
     network: "{{podman_network}}"
-    command: sh
+    # command: sh
 #      - -c ssl=on
 #      - -c ssl_cert_file=/files/server-cert.pem
 #      - -c ssl_key_file=/files/server-key.pem
@@ -49,7 +49,7 @@
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
     network: "{{podman_network}}"
-    command: sh
+    # command: sh
       # -  postgres
       # -  ssl=on
       # -  ssl_cert_file=/files/server-cert.pem
