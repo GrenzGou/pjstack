@@ -39,7 +39,7 @@
         cp /ssl/server-key.pem /tmp/server-key.pem
         cp /ssl/server-cert.pem /tmp/server-cert.pem
     
-        chown 100998:100998 /tmp/server-key.pem /tmp/server-cert.pem
+        chown postgres:postgres /tmp/server-key.pem /tmp/server-cert.pem
         chmod 600 /tmp/server-key.pem
         chmod 644 /tmp/server-cert.pem
     
@@ -74,7 +74,7 @@
         cp /ssl/server-key.pem /tmp/server-key.pem
         cp /ssl/server-cert.pem /tmp/server-cert.pem
     
-        chown 100998:100998 /tmp/server-key.pem /tmp/server-cert.pem
+        chown postgres:postgres /tmp/server-key.pem /tmp/server-cert.pem
         chmod 600 /tmp/server-key.pem
         chmod 644 /tmp/server-cert.pem
     
