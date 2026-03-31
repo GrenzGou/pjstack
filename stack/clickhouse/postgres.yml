@@ -29,10 +29,11 @@
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_clickhouse/files:/files:z"
     network: "{{podman_network}}"
-    command:
-     - -c ssl=on
-     - -c ssl_cert_file=/files/server-cert.pem
-     - -c ssl_key_file=/files/server-key.pem
+    command: >
+      postgres
+      -c ssl=on
+      -c ssl_cert_file=/files/server-cert.pem
+      -c ssl_key_file=/files/server-key.pem
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -49,10 +50,11 @@
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
     network: "{{podman_network}}"
-    command: sh
-     - -c ssl=on
-     - -c ssl_cert_file=/files/server-cert.pem
-     - -c ssl_key_file=/files/server-key.pem
+    command: >
+      postgres
+      -c ssl=on
+      -c ssl_cert_file=/files/server-cert.pem
+      -c ssl_key_file=/files/server-key.pem
 
 
 - name: Create pg_clickhouse extension
