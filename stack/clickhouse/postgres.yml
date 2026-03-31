@@ -25,14 +25,14 @@
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
-      - "{{local_path}}/pg_clickhouse/data:/var/lib/postgresql/data:z"
+      - "{{local_path}}/pg_clickhouse/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_clickhouse/files:/files:z"
     network: "{{podman_network}}"
-    # command: sh
-#      - -c ssl=on
-#      - -c ssl_cert_file=/files/server-cert.pem
-#      - -c ssl_key_file=/files/server-key.pem
+    command:
+     - -c ssl=on
+     - -c ssl_cert_file=/files/server-cert.pem
+     - -c ssl_key_file=/files/server-key.pem
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -45,15 +45,14 @@
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
-      - "{{local_path}}/pg_citus/data:/var/lib/postgresql/data:z"
+      - "{{local_path}}/pg_citus/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
     network: "{{podman_network}}"
-    # command: sh
-      # -  postgres
-      # -  ssl=on
-      # -  ssl_cert_file=/files/server-cert.pem
-      # -  ssl_key_file=/files/server-key.pem
+    command: sh
+     - -c ssl=on
+     - -c ssl_cert_file=/files/server-cert.pem
+     - -c ssl_key_file=/files/server-key.pem
 
 
 - name: Create pg_clickhouse extension
