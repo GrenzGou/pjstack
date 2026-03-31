@@ -3,6 +3,7 @@
     path: "{{ item.path }}"
     state: directory
   with_items:
+    - { path: "{{local_path}}/ssl/postgres" }
     - { path: "{{local_path}}/pg_clickhouse" }
     - { path: "{{local_path}}/pg_clickhouse/config" }
     - { path: "{{local_path}}/pg_clickhouse/files" }
@@ -13,6 +14,18 @@
     - { path: "{{local_path}}/pg_citus/files" }
     - { path: "{{local_path}}/pg_citus/data" }
     - { path: "{{log_path}}/pg_citus" }
+
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: "{{local_path}}/ssl/{{item.path}}"
+    dest: "{{local_path}}/ssl/postgres/{{item.path}}"
+    owner: 100998
+    group: 100998
+    mode: '0600'
+  with_items:
+    - { path: "server-cert.pem" }
+    - { path: "server-cert.key" }
+
 
 - name: Run pg_clickhouse container
   containers.podman.podman_container:
@@ -28,26 +41,19 @@
       - "{{local_path}}/pg_clickhouse/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_clickhouse/files:/files:z"
-      - "{{local_path}}/ssl:/ssl:z"
+      - "{{local_path}}/ssl/postgres:/ssl:z"
     network: "{{podman_network}}"
     command:
-      - bash
-      - -c
-      - |
-        set -e
-    
-        cp /ssl/server-key.pem /tmp/server-key.pem
-        cp /ssl/server-cert.pem /tmp/server-cert.pem
-    
-        chown postgres:postgres /tmp/server-key.pem /tmp/server-cert.pem
-        chmod 600 /tmp/server-key.pem
-        chmod 644 /tmp/server-cert.pem
-    
-        exec postgres \
-          -c ssl=on \
-          -c ssl_cert_file=/tmp/server-cert.pem \
-          -c ssl_key_file=/tmp/server-key.pem
-        '
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "ssl=on"
+      - "-c"
+      - "ssl_cert_file=/ssl/server-cert.pem"
+      - "-c"
+      - "ssl_key_file=/ssl/server-key.pem"
+
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -63,25 +69,19 @@
       - "{{local_path}}/pg_citus/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
-      - "{{local_path}}/ssl:/ssl:z"
+      - "{{local_path}}/ssl/postgres:/ssl:z"
     network: "{{podman_network}}"
     command:
-      - bash
-      - -c
-      - |
-        set -e
-    
-        cp /ssl/server-key.pem /tmp/server-key.pem
-        cp /ssl/server-cert.pem /tmp/server-cert.pem
-    
-        chown postgres:postgres /tmp/server-key.pem /tmp/server-cert.pem
-        chmod 600 /tmp/server-key.pem
-        chmod 644 /tmp/server-cert.pem
-    
-        exec postgres \
-          -c ssl=on \
-          -c ssl_cert_file=/tmp/server-cert.pem \
-          -c ssl_key_file=/tmp/server-key.pem
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "ssl=on"
+      - "-c"
+      - "ssl_cert_file=/ssl/server-cert.pem"
+      - "-c"
+      - "ssl_key_file=/ssl/server-key.pem"
+
 
 
 - name: Create pg_clickhouse extension
