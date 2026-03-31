@@ -21,7 +21,6 @@
     src: "{{local_path}}/ssl/{{item.path}}"
     dest: "{{local_path}}/ssl/postgres/{{item.path}}"
     owner: 100998
-    group: 100998
     mode: '0600'
     remote_src: yes
   with_items:
