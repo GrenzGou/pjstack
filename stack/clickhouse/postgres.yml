@@ -58,7 +58,7 @@
 - name: Run pg_citus container
   containers.podman.podman_container:
     name: pg_citus
-    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus:14
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus_house:14
     state: started
     restart_policy: always
     ports:
