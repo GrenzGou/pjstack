@@ -40,7 +40,7 @@
         exec postgres
           -c ssl=on
           -c ssl_cert_file=/tmp/server-cert.pem
-          -c ssl_key_file=/tmp/server-key.pem
+          -c ssl_key_file=/tmp/server-key.pem"
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -68,7 +68,7 @@
         exec postgres
           -c ssl=on
           -c ssl_cert_file=/tmp/server-cert.pem
-          -c ssl_key_file=/tmp/server-key.pem
+          -c ssl_key_file=/tmp/server-key.pem"
 
 
 - name: Create pg_clickhouse extension
