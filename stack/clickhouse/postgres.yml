@@ -21,7 +21,7 @@
     state: started
     restart_policy: always
     ports:
-      - "2{{staging_port}}:5432"
+      - "8{{staging_port}}:5432"
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
@@ -29,11 +29,10 @@
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_clickhouse/files:/files:z"
     network: "{{podman_network}}"
-    command:
-      - postgres
-      - -c ssl=on
-      - -c ssl_cert_file=/files/server-cert.pem
-      - -c ssl_key_file=/files/server-key.pem
+    command: pg_upgrade --link
+#      - -c ssl=on
+#      - -c ssl_cert_file=/files/server-cert.pem
+#      - -c ssl_key_file=/files/server-key.pem
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -42,7 +41,7 @@
     state: started
     restart_policy: always
     ports:
-      - "2{{citus_port}}:5432"
+      - "8{{citus_port}}:5432"
     env:
       POSTGRES_PASSWORD: "confidential"
     volumes:
@@ -51,10 +50,10 @@
       - "{{local_path}}/pg_citus/files:/files:z"
     network: "{{podman_network}}"
     command:
-      - postgres
-      - -c ssl=on
-      - -c ssl_cert_file=/files/server-cert.pem
-      - -c ssl_key_file=/files/server-key.pem
+      -  postgres
+      -  ssl=on
+      -  ssl_cert_file=/files/server-cert.pem
+      -  ssl_key_file=/files/server-key.pem
 
 
 - name: Create pg_clickhouse extension
