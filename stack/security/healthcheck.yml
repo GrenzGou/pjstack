@@ -15,9 +15,11 @@
     dest: "{{local_path}}/caddy/Caddyfile"
     content: |
       dwh-manager {
-          # Path to your certificate and private key
           tls /ssl/server-cert.pem /ssl/server-key.pem
-          reverse_proxy healthcheck:8000
+
+          handle /healthcheck* {
+              reverse_proxy healthcheck:8000
+          }
       }
 
 - name: Run pg_apps container
@@ -40,32 +42,30 @@
     image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/healthchecks:4.1.1
     state: started
     restart_policy: unless-stopped
+    recreate: true
     interactive: true
     tty: true
-    recreate: true
     env:
-      DB: "postgres"
+      DB: postgres
       DB_CONN_MAX_AGE: "0"
-      DB_HOST: "pg_apps"
+      DB_HOST: pg_apps
       DB_NAME: healthcheck
-      DB_PASSWORD: "confidential"
+      DB_PASSWORD: confidential
       DB_PORT: "5432"
       DB_SSLMODE: prefer
       DB_TARGET_SESSION_ATTRS: read-write
       DB_USER: postgres
-      DEBUG: "False"
-      DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
-      EMAIL_HOST: "smtp.google.com"
+      DEBUG: false
+      DEFAULT_FROM_EMAIL: admin.dwh@jiarsi.com
+      EMAIL_HOST: smtp.gmail.com
       EMAIL_HOST_PASSWORD: ""
-      EMAIL_HOST_USER: "admin.dwh@jiarsi.com"
-      EMAIL_PORT: 587
-      EMAIL_USE_TLS: True
-      SECRET_KEY: "TralalaTrololo"
-      SITE_ROOT: https://dwh-manager:8000
+      EMAIL_HOST_USER: admin.dwh@jiarsi.com
+      EMAIL_PORT: "587"
+      EMAIL_USE_TLS: true
+      SECRET_KEY: TralalaTrololo
+      SITE_ROOT: http://dwh-manager/healthcheck
     volumes:
       - "{{local_path}}/healthcheck:/data:z"
-    ports:
-      - "16661:8000"
     network:
       - apjn
     shm_size: "1gb"
