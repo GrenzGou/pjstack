@@ -13,3 +13,5 @@
         registry: dwh-ap-southeast-3.cr.bytepluses.com
     - name: --Initialize-- Certificate
       ansible.builtin.include_tasks: "stack/security/healthcheck.yml"
+    - name: --Initialize-- Certificate
+      ansible.builtin.include_tasks: "stack/security/caddy.yml"
