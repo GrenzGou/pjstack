@@ -48,7 +48,7 @@
 - name: Run pg_citus container
   containers.podman.podman_container:
     name: pg_citus
-    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus:14
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus_house:14
     state: started
     restart_policy: always
     ports:
@@ -61,7 +61,7 @@
       - "{{local_path}}/pg_citus/files:/files:z"
       - "{{local_path}}/ssl/citus:/ssl:z"
     network: "{{podman_network}}"
-    healthcheck: "pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.json.uuid}} --cacert /ssl/ca-cert.pem || exit 1"
+    healthcheck: "pg_isready -ds && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{create_check.json.uuid}} --cacert /ssl/ca-cert.pem || exit 1"
     healthcheck_interval: "5s"
     healthcheck_retries: "30"
     healthcheck_timeout: "10s"
