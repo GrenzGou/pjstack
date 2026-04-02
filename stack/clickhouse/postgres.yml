@@ -40,10 +40,10 @@
   register: create_check
 - debug:
     msg: "{{create_check}}"
-    
+
 - debug:
     msg: "{{create_check.uuid}}"
-    
+
 
 - name: Run pg_citus container
   containers.podman.podman_container:
