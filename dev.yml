@@ -5,12 +5,15 @@
   become_user: "{{ ansible_user }}"
   vars:
     pod_name: 'manager'
-  tasks:
-    - name: --Initialize-- Airflow Manager
-      ansible.builtin.include_tasks: "stack/manager/airflow.yml"
+  # tasks:
+  #   - name: --Initialize-- Airflow Manager
+  #     ansible.builtin.include_tasks: "stack/manager/airflow.yml"
 
-    - name: --Initialize-- Airflow Engine
-      ansible.builtin.include_tasks: "stack/engine/airflow.yml"
+  #   - name: --Initialize-- Airflow Engine
+  #     ansible.builtin.include_tasks: "stack/engine/airflow.yml"
+      
+    - name: --Initialize-- Dockhand
+      ansible.builtin.include_tasks: "stack/security/dockhand.yml"
 
 # - name: postgres Environment
 #   hosts: database_ods_clickhouse
