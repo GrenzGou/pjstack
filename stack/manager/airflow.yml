@@ -1,21 +1,3 @@
-- name: Create healthcheck via API
-  ansible.builtin.uri:
-    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
-    method: POST
-    headers:
-      Content-Type: application/json
-      X-Api-Key: "{{healthcheck_apikey}}"
-    body_format: json
-    body:
-      name: "Airflow Postgres"
-      tags: "prod airflow database"
-      timeout: 60
-      grace: 120
-    ca_path: "{{local_path}}/ssl/ca-cert.pem"
-    status_code: 201
-  register: airflow_postgres
-
-
 - name: "--PODMAN-- Airflow Directory"
   run_once: true
   ansible.builtin.file:
