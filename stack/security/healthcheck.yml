@@ -17,7 +17,6 @@
     tty: true
     recreate: true
     env:
-      environment:
         DB: "sqlite"
         DB_NAME: "/data/hc.sqlite"
         DEBUG: "False"
