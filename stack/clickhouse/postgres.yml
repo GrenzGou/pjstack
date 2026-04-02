@@ -42,7 +42,7 @@
     msg: "{{create_check}}"
 
 - debug:
-    msg: "{{create_check..json.uuid}}"
+    msg: "{{create_check.json.uuid}}"
 
 
 - name: Run pg_citus container
