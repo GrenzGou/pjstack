@@ -1,3 +1,28 @@
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "Airflow {{item.name}}"
+      slug: "airflow-{{item.name}}"
+      tags: "prod airflow database"
+      timeout: 60
+      grace: 120
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  with_items:
+    - {name: "worker"}
+    - {name: "scheduler"}
+    - {name: "dag-processor"}
+    - {name: "triggerer"}
+
+
+
+
 - name: "--PODMAN-- Airflow Directory"
   run_once: true
   ansible.builtin.file:
@@ -80,7 +105,7 @@
     tty: true
     interactive: true
     network: "{{podman_network}}"
-    healthcheck: 'celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d celery@${HOSTNAME} || celery --app airflow.executors.celery_executor.app inspect ping -d celery@$${HOSTNAME}'
+    healthcheck: 'celery --app airflow.providers.celery.executors.celery_executor.app inspect ping && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-worker --cacert /ssl/ca-cert.pem  || exit 1'
     healthcheck_interval: "30s"
     healthcheck_timeout: "10s"
     healthcheck_retries: "5"
@@ -119,6 +144,7 @@
       - "{{log_path}}/airflow:/opt/airflow/logs:z"
       - "{{local_path}}/airflow/plugins:/opt/airflow/plugins:z"
       - "{{local_path}}/airflow/config:/opt/airflow/config:z"
+      - "{{local_path}}/ssl:/ssl:z"
       #      - "{{local_path}}/airflow/airflow.cfg:/opt/airflow/airflow.cfg:z"
       #    generate_systemd:
       #      path: "/home/{{ansible_user}}/.config/systemd/user/"
@@ -137,7 +163,7 @@
     tty: true
     interactive: true
     network: "{{podman_network}}"
-    healthcheck: 'curl --fail http://localhost:8974/health'
+    healthcheck: 'curl --fail http://localhost:8974/health && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-scheduler --cacert /ssl/ca-cert.pem || exit 1'
     healthcheck_interval: "30s"
     healthcheck_timeout: "10s"
     healthcheck_retries: "5"
@@ -174,6 +200,7 @@
       - "{{log_path}}/airflow:/opt/airflow/logs:z"
       - "{{local_path}}/airflow/plugins:/opt/airflow/plugins:z"
       - "{{local_path}}/airflow/config:/opt/airflow/config:z"
+      - "{{local_path}}/ssl:/ssl:z"
       #      - "{{local_path}}/airflow/airflow.cfg:/opt/airflow/airflow.cfg:z"
       #    generate_systemd:
       #      path: "/home/{{ansible_user}}/.config/systemd/user/"
@@ -230,6 +257,7 @@
       - "{{log_path}}/airflow:/opt/airflow/logs:z"
       - "{{local_path}}/airflow/plugins:/opt/airflow/plugins:z"
       - "{{local_path}}/airflow/config:/opt/airflow/config:z"
+      - "{{local_path}}/ssl:/ssl:z"
       #      - "{{local_path}}/airflow/airflow.cfg:/opt/airflow/airflow.cfg:z"
       #    generate_systemd:
       #      path: "/home/{{ansible_user}}/.config/systemd/user/"
@@ -285,6 +313,7 @@
       - "{{log_path}}/airflow:/opt/airflow/logs:z"
       - "{{local_path}}/airflow/plugins:/opt/airflow/plugins:z"
       - "{{local_path}}/airflow/config:/opt/airflow/config:z"
+      - "{{local_path}}/ssl:/ssl:z"
 #      - "{{local_path}}/airflow/airflow.cfg:/opt/airflow/airflow.cfg:z"
 #    generate_systemd:
 #      path: "/home/{{ansible_user}}/.config/systemd/user/"
@@ -328,7 +357,7 @@
     command: "bash -c \"pip install {{ airflow_plugins }}\""
   when: init == 1
   with_items:
-     - airflow-worker
-     - airflow-scheduler
-     - airflow-triggerer
-     - airflow-dag-processor
+    - airflow-worker
+    - airflow-scheduler
+    - airflow-triggerer
+    - airflow-dag-processor
