@@ -1,3 +1,21 @@
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "Airflow Postgres"
+      tags: "prod airflow database"
+      timeout: 60
+      grace: 120
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: airflow_postgres
+
+
 - name: "--PODMAN-- Airflow Directory"
   run_once: true
   ansible.builtin.file:
@@ -49,23 +67,61 @@
     - nfs-server
   when: mounting == 1
 
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "Airflow Redis"
+      slug: "airflow-redis"
+      tags: "prod airflow database"
+      timeout: 60
+      grace: 120
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: airflow_redis
 
 - name: "Setting Airlfow Redis"
   containers.podman.podman_container:
     name: airflow-redis
     image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/redis:8.2
-    healthcheck: 'CMD redis-cli ping  && curl -f http://{{healthcheck_host}}:9922/ping/{{healthcheck_apikey}}/airflow-redis || exit 1'
+    healthcheck: 'CMD redis-cli ping  && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-redis --cacert /ssl/ca-cert.pem|| exit 1'
     healthcheck_interval: "10s"
     healthcheck_timeout: "30s"
     healthcheck_retries: "50"
     healthcheck_start_period: "30s"
     timezone: "local"
     recreate: true
+    volumes:
+      - "{{local_path}}/ssl:/ssl:z"
     ports:
       - "{{ airflow_redis_port }}:6379"
     network: "{{podman_network}}"
     env:
       AIRFLOW_UID: "1000"
+
+
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "Airflow Postgres"
+      slug: "airflow-postgres"
+      tags: "prod airflow database"
+      timeout: 60
+      grace: 120
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: airflow_postgres
 
 - name: "Setting Airflow Postgres"
   containers.podman.podman_container:
@@ -80,13 +136,14 @@
       POSTGRES_DB: airflow
     ports:
       - "{{ airflow_postgres_port }}:5432"
-    healthcheck: 'CMD pg_isready -U airflow  && curl -f http://{{healthcheck_host}}:9922/ping/{{healthcheck_apikey}}/airflow-postgres || exit 1'
+    healthcheck: 'CMD pg_isready -U airflow  && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-postgres  --cacert /ssl/ca-cert.pem  || exit 1'
     healthcheck_interval: "10s"
     healthcheck_retries: "5"
     healthcheck_start_period: "5s"
     network: "{{podman_network}}"
     volumes:
       - "airflow-postgres:/var/lib/postgresql:z"
+      - "{{local_path}}/ssl:/ssl:z"
 
 
 - name: "--PODMAN-- Airflow Init"
@@ -174,6 +231,26 @@
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins,config}
         exec /entrypoint airflow version
 
+
+
+- name: Create healthcheck via webserver
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "Airflow Webserver"
+      slug: "airflow-webserver"
+      tags: "prod airflow database"
+      timeout: 60
+      grace: 120
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: airflow_webserver
+
 - name: "--PODMAN-- CONTAINER Airflow Webserver"
   containers.podman.podman_container:
     name: airflow-webserver
@@ -183,7 +260,7 @@
     tty: true
     interactive: true
     network: "{{podman_network}}"
-    healthcheck: 'curl --fail http://localhost:8080/health  && curl -f http://{{healthcheck_host}}:9922/ping/{{healthcheck_apikey}}/airflow-webserver || exit 1'
+    healthcheck: 'curl --fail http://localhost:8080/health   && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-webserver  --cacert /ssl/ca-cert.pem  || exit 1'
     healthcheck_interval: "30s"
     healthcheck_timeout: "10s"
     healthcheck_retries: "5"
@@ -222,15 +299,8 @@
       - "{{log_path}}/airflow:/opt/airflow/logs:z"
       - "{{local_path}}/airflow/plugins:/opt/airflow/plugins:z"
       - "{{local_path}}/airflow/config:/opt/airflow/config:z"
-    labels:
-      traefik.enable: true
-      traefik.http.routers.airflow-webserver-secure.rule: Host(`{{inventory_hostname}}`) && PathPrefix(`/airflow`))
-      # traefik.http.services.airflow-webserver.loadbalancer.server.port: 8080
-      traefik.http.routers.airflow-webserver.entrypoints: websecure
+      - "{{local_path}}/ssl:/ssl:z"
 
-      # Add the following label
-      traefik.http.routers.airflow-webserver.tls: true
-      traefik.http.routers.airflow-webserver-secure.tls: true
 #      - "{{local_path}}/airflow/airflow.cfg:/opt/airflow/airflow.cfg:z"
 #    generate_systemd:
 #      path: "/home/{{ansible_user}}/.config/systemd/user/"
