@@ -1,87 +1,10 @@
-
--  name: ALL Environment
-   hosts: manager,database_staging,database_ods_clickhouse
-   become: true
-   gather_facts: true
-   vars:
-     tasks:
-       - name: "--PODMAN-- SSL Directory"
-         run_once: true
-         ansible.builtin.file:
-           path: "{{ item.path }}"
-           state: directory
-           mode: "{{ item.mode }}"
-         with_items:
-           - { path: "{{local_path}}/ssl/", mode: '0775' }
-
-       - name: Mount an NFS volume
-         become: true
-         become_user: root
-         ansible.posix.mount:
-           src: "{{host_dwh_manager}}:{{item.path}}"
-           path: "{{item.path}}"
-           opts: rw,sync,hard
-           state: mounted
-           fstype: nfs
-         with_items:
-           - { path: "{{local_path}}/ssl" }
-         ignore_errors: true
-
-       - name: Change permission
-         ansible.builtin.file:
-           path: "{{item.path}}"
-           mode: '0664'
-         with_items:
-           - { path: "{{local_path}}/ssl/ca-cert.pem" }
-           - { path: "{{local_path}}/ssl/ca.csr" }
-           - { path: "{{local_path}}/ssl/ca-key.pem" }
-           - { path: "{{local_path}}/ssl/server-cert.pem" }
-           - { path: "{{local_path}}/ssl/server.csr" }
-           - { path: "{{local_path}}/ssl/server-key.pem" }
-
-
-- name: Postgres Environment
-  hosts: database_staging
-  become: true
-  gather_facts: true
-  become_user: "{{ ansible_user }}"
-  vars:
-    pod_name: 'staging'
-  tasks:
-    - name: "--PODMAN-- Airflow Directory"
-      run_once: true
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: directory
-        mode: "{{ item.mode }}"
-      with_items:
-        - { path: "{{local_path}}/postgres/", mode: '0775' }
-
-    - name: --Initialize-- Postgres
-      ansible.builtin.include_tasks: "stack/clickhouse/postgres.yml"
-
-
-
-- name: Clickhouse Environment
-  hosts: database_ods_clickhouse
-  become: true
-  gather_facts: true
-  become_user: "{{ ansible_user }}"
-  vars:
-    pod_name: 'clickhouse'
-  tasks:
-    - name: --Initialize-- Certificate
-      ansible.builtin.include_tasks: "stack/clickhouse/ds.yml"
-
 - name: Warpgate Environment
   hosts: manager
   become: true
   gather_facts: true
   become_user: "{{ ansible_user }}"
   vars:
-    pod_name: 'clickhouse'
+    pod_name: 'healthcheck'
   tasks:
     - name: --Initialize-- Certificate
-      ansible.builtin.include_tasks: "stack/security/wg.yml"
-
-
+      ansible.builtin.include_tasks: "stack/security/healthcheck.yml"
