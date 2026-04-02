@@ -118,7 +118,7 @@
       POSTGRES_DB: airflow
     ports:
       - "{{ airflow_postgres_port }}:5432"
-    healthcheck: 'CMD pg_isready -U airflow  && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-postgres  --cacert /ssl/ca-cert.pem  || exit 1'
+    healthcheck: 'pg_isready -ds && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-postgres  --cacert /ssl/ca-cert.pem  || exit 1'
     healthcheck_interval: "10s"
     healthcheck_retries: "5"
     healthcheck_start_period: "5s"
@@ -242,7 +242,7 @@
     tty: true
     interactive: true
     network: "{{podman_network}}"
-    healthcheck: 'curl --fail http://localhost:8080/health   && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-webserver  --cacert /ssl/ca-cert.pem  || exit 1'
+    healthcheck: 'curl --fail http://localhost:8080/api/v2/monitor/health && curl -f https://{{host_dwh_manager}}/healthcheck/ping/{{healthcheck_pingkey}}/airflow-webserver  --cacert /ssl/ca-cert.pem  || exit 1'
     healthcheck_interval: "30s"
     healthcheck_timeout: "10s"
     healthcheck_retries: "5"
