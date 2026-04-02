@@ -148,6 +148,23 @@
 
 
 
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "clickhouse"
+      tags: "prod database"
+      timeout: 300
+      grace: 1800
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: ch_hc
+
 - name: "--PODMAN-- CONTAINER clickhouse"
   containers.podman.podman_container:
     name: ods-ch
@@ -164,6 +181,10 @@
       - "{{local_path}}/clickhouse/config/ssl.xml:/etc/clickhouse-server/config.d/ssl.xml:z"
       - "{{local_path}}/clickhouse/config/scrypt.xml:/etc/clickhouse-server/config.d/scrypt.xml:z"
     shm_size: 64g
+    healthcheck: 'pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{ch_hc.json.uuid}} || exit 1'
+    healthcheck_interval: "5s"
+    healthcheck_retries: "30"
+    healthcheck_timeout: "10s"
     env:
       CLICKHOUSE_USER: dwh
       CLICKHOUSE_PASSWORD_FILE: /run/secrets/hidden
