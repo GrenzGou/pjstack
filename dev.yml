@@ -5,7 +5,7 @@
   become_user: "{{ ansible_user }}"
   vars:
     pod_name: 'manager'
-  # tasks:
+  tasks:
   #   - name: --Initialize-- Airflow Manager
   #     ansible.builtin.include_tasks: "stack/manager/airflow.yml"
 
