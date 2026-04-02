@@ -61,7 +61,7 @@
       - "{{local_path}}/pg_citus/files:/files:z"
       - "{{local_path}}/ssl/citus:/ssl:z"
     network: "{{podman_network}}"
-    healthcheck: "pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.json.uuid}} --cacert {{local_path}}/ssl/ca-cert.pem || exit 1"
+    healthcheck: "pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.json.uuid}} --cacert /ssl/ca-cert.pem || exit 1"
     healthcheck_interval: "5s"
     healthcheck_retries: "30"
     healthcheck_timeout: "10s"
