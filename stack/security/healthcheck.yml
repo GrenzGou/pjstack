@@ -17,12 +17,20 @@
     tty: true
     recreate: true
     env:
-        DB: "sqlite"
-        DB_NAME: "/data/hc.sqlite"
+      environment:
+        DB: "postgres"
+        DB_CONN_MAX_AGE: "0"
+        DB_HOST: "{{host_dwh_staging_pg}}"
+        DB_NAME: healthcheck
+        DB_PASSWORD: "confidential"
+        DB_PORT: "2{{citus_port}}"
+        DB_SSLMODE: prefer
+        DB_TARGET_SESSION_ATTRS: read-write
+        DB_USER: dwh
         DEBUG: "False"
         DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
         EMAIL_HOST: "smtp.google.com"
-        EMAIL_HOST_PASSWORD: "4pjDWH2@26"
+        EMAIL_HOST_PASSWORD: ""
         EMAIL_HOST_USER: "admin.dwh@jiarsi.com"
         EMAIL_PORT: 587
         EMAIL_USE_TLS: True
