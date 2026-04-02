@@ -1,13 +1,28 @@
-- name: postgres Environment
-  hosts: database_ods_clickhouse
+- name: Airflow Environment
+  hosts: manager
   become: true
   gather_facts: true
   become_user: "{{ ansible_user }}"
   vars:
-    pod_name: 'clickhouse'
+    pod_name: 'manager'
   tasks:
-    - name: --Initialize-- Postgres
-      ansible.builtin.include_tasks: "stack/clickhouse/postgres.yml"
-    - name: --Initialize-- Clickhouse
-      ansible.builtin.include_tasks: "stack/clickhouse/ds.yml"
+    - name: --Initialize-- Airflow Manager
+      ansible.builtin.include_tasks: "stack/manager/airflow.yml"
+
+    - name: --Initialize-- Airflow Engine
+      ansible.builtin.include_tasks: "stack/engine/airflow.yml"
+
+# - name: postgres Environment
+#   hosts: database_ods_clickhouse
+#   become: true
+#   gather_facts: true
+#   become_user: "{{ ansible_user }}"
+#   vars:
+#     pod_name: 'clickhouse'
+#   tasks:
+#     - name: --Initialize-- Postgres
+#       ansible.builtin.include_tasks: "stack/clickhouse/postgres.yml"
+      
+#     - name: --Initialize-- Clickhouse
+#       ansible.builtin.include_tasks: "stack/clickhouse/ds.yml"
 
