@@ -6,6 +6,8 @@
   vars:
     pod_name: 'clickhouse'
   tasks:
-    - name: --Initialize-- Certificate
+    - name: --Initialize-- Postgres
       ansible.builtin.include_tasks: "stack/clickhouse/postgres.yml"
+    - name: --Initialize-- Clickhouse
+      ansible.builtin.include_tasks: "stack/clickhouse/ds.yml"
 
