@@ -42,7 +42,7 @@
     msg: "{{create_check}}"
 
 - debug:
-    msg: "{{create_check.uuid}}"
+    msg: "{{create_check..json.uuid}}"
 
 
 - name: Run pg_citus container
@@ -61,7 +61,7 @@
       - "{{local_path}}/pg_citus/files:/files:z"
       - "{{local_path}}/ssl/postgres:/ssl:z"
     network: "{{podman_network}}"
-    healthcheck: 'pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.uuid}} || exit 1'
+    healthcheck: 'pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.json.uuid}} || exit 1'
     healthcheck_interval: "5s"
     healthcheck_retries: "30"
     healthcheck_timeout: "10s"
