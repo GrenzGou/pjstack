@@ -9,6 +9,17 @@
     - "{{local_path}}/apps"
     - "{{local_path}}/apps/pg"
 
+
+- name: "--PODMAN-- USE Storage Encrypt"
+  copy:
+    dest: "{{local_path}}/caddy/Caddyfile"
+    content: |
+      dwh-manager {
+          # Path to your certificate and private key
+          tls /ssl/server-cert.pem /ssl/server-key.pem
+          reverse_proxy healthcheck:8000
+      }
+
 - name: Run pg_apps container
   containers.podman.podman_container:
     name: pg_apps
@@ -22,6 +33,7 @@
       - "{{local_path}}/apps/pg:/var/lib/postgresql:z"
     network: "{{podman_network}}"
 
+
 - name: Create HealthCheck container
   containers.podman.podman_container:
     name: healthcheck
@@ -32,24 +44,24 @@
     tty: true
     recreate: true
     env:
-        DB: "postgres"
-        DB_CONN_MAX_AGE: "0"
-        DB_HOST: "pg_apps"
-        DB_NAME: healthcheck
-        DB_PASSWORD: "confidential"
-        DB_PORT: "5432"
-        DB_SSLMODE: prefer
-        DB_TARGET_SESSION_ATTRS: read-write
-        DB_USER: postgres
-        DEBUG: "False"
-        DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
-        EMAIL_HOST: "smtp.google.com"
-        EMAIL_HOST_PASSWORD: ""
-        EMAIL_HOST_USER: "admin.dwh@jiarsi.com"
-        EMAIL_PORT: 587
-        EMAIL_USE_TLS: True
-        SECRET_KEY: "TralalaTrololo"
-        SITE_ROOT: http://69.5.11.188:8000
+      DB: "postgres"
+      DB_CONN_MAX_AGE: "0"
+      DB_HOST: "pg_apps"
+      DB_NAME: healthcheck
+      DB_PASSWORD: "confidential"
+      DB_PORT: "5432"
+      DB_SSLMODE: prefer
+      DB_TARGET_SESSION_ATTRS: read-write
+      DB_USER: postgres
+      DEBUG: "False"
+      DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
+      EMAIL_HOST: "smtp.google.com"
+      EMAIL_HOST_PASSWORD: ""
+      EMAIL_HOST_USER: "admin.dwh@jiarsi.com"
+      EMAIL_PORT: 587
+      EMAIL_USE_TLS: True
+      SECRET_KEY: "TralalaTrololo"
+      SITE_ROOT: http://dwh-manager:8000
     volumes:
       - "{{local_path}}/healthcheck:/data:z"
     ports:
