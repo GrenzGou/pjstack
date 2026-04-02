@@ -21,6 +21,7 @@
       }
 
 
+
 - name: Create Caddy container
   containers.podman.podman_container:
     name: dockhand
@@ -30,6 +31,8 @@
     interactive: true
     tty: true
     recreate: true
+    env:
+      DATABASE_URL: postgres://postgres:confidential@pg_apps:5432/dockhand
     volumes:
       - "/run/user/1000/podman/podman.sock:/var/run/docker.sock:z"
       - "{{local_path}}/dockhand:/app/data:z"
