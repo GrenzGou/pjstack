@@ -6,8 +6,19 @@
   #    owner: "{{ ansible_user }}"
   with_items:
     - "{{local_path}}/caddy"
-    
-    
+
+- name: "--PODMAN-- USE Storage Encrypt"
+  copy:
+    dest: "{{local_path}}/caddy/Caddyfile"
+    content: |
+      localhost {
+          # Path to your certificate and private key
+          tls /ssl/server-cert.pem /ssl/server-key.pem
+          reverse_proxy localhost:8080
+      }
+
+
+
 - name: Create Caddy container
   containers.podman.podman_container:
     name: caddy
@@ -19,6 +30,7 @@
     recreate: true
     volumes:
       - "{{local_path}}/caddy:/etc/caddy:z"
+      - "{{local_path}}/ssl/postgres:/ssl:z"
     ports:
       - "443:443"
     network:
