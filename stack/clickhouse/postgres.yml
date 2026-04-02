@@ -15,7 +15,7 @@
   ansible.builtin.copy:
     src: "{{local_path}}/ssl/{{item.path}}"
     dest: "{{local_path}}/ssl/citus/{{item.path}}"
-    owner: "100998"
+    owner: "100069"
     mode: '0600'
     remote_src: yes
   with_items:
