@@ -6,6 +6,20 @@
   #    owner: "{{ ansible_user }}"
   with_items:
     - "{{local_path}}/healthcheck"
+    - "{{local_path}}/apps"
+    - "{{local_path}}/apps/pg"
+
+- name: Run pg_apps container
+  containers.podman.podman_container:
+    name: pg_apps
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus:14
+    state: started
+    restart_policy: always
+    env:
+      POSTGRES_PASSWORD: "confidential"
+    volumes:
+      - "{{local_path}}/apps/pg:/var/lib/postgresql:z"
+    network: "{{podman_network}}"
 
 - name: Create HealthCheck container
   containers.podman.podman_container:
@@ -19,13 +33,13 @@
     env:
         DB: "postgres"
         DB_CONN_MAX_AGE: "0"
-        DB_HOST: "{{host_dwh_staging_pg}}"
+        DB_HOST: "pg_apps"
         DB_NAME: healthcheck
         DB_PASSWORD: "confidential"
-        DB_PORT: "2{{citus_port}}"
+        DB_PORT: "5432"
         DB_SSLMODE: prefer
         DB_TARGET_SESSION_ATTRS: read-write
-        DB_USER: dwh
+        DB_USER: postgres
         DEBUG: "False"
         DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
         EMAIL_HOST: "smtp.google.com"
