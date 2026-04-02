@@ -22,7 +22,7 @@
         DEBUG: "False"
         DEFAULT_FROM_EMAIL: "admin.dwh@jiarsi.com"
         EMAIL_HOST: "smtp.google.com"
-        EMAIL_HOST_PASSWORD: ""
+        EMAIL_HOST_PASSWORD: "4pjDWH2@26"
         EMAIL_HOST_USER: "admin.dwh@jiarsi.com"
         EMAIL_PORT: 587
         EMAIL_USE_TLS: True
