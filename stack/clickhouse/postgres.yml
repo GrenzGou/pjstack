@@ -3,7 +3,7 @@
     path: "{{ item.path }}"
     state: directory
   with_items:
-    - { path: "{{local_path}}/ssl/postgres" }
+    - { path: "{{local_path}}/ssl/citus" }
     - { path: "{{local_path}}/pg_citus" }
     - { path: "{{local_path}}/pg_citus/config" }
     - { path: "{{local_path}}/pg_citus/files" }
@@ -14,7 +14,7 @@
   become: true
   ansible.builtin.copy:
     src: "{{local_path}}/ssl/{{item.path}}"
-    dest: "{{local_path}}/ssl/postgres/{{item.path}}"
+    dest: "{{local_path}}/ssl/citus/{{item.path}}"
     owner: "100998"
     mode: '0600'
     remote_src: yes
@@ -38,6 +38,12 @@
     ca_path: "{{local_path}}/ssl/ca-cert.pem"
     status_code: 201
   register: create_check
+- debug:
+    msg: "{{create_check}}"
+    
+- debug:
+    msg: "{{create_check.uuid}}"
+    
 
 - name: Run pg_citus container
   containers.podman.podman_container:
@@ -55,6 +61,10 @@
       - "{{local_path}}/pg_citus/files:/files:z"
       - "{{local_path}}/ssl/postgres:/ssl:z"
     network: "{{podman_network}}"
+    healthcheck: 'pg_isready -ds && curl -f https://{{host_dwh_manager}}/ping/{{create_check.uuid}} || exit 1'
+    healthcheck_interval: "5s"
+    healthcheck_retries: "30"
+    healthcheck_timeout: "10s"
     command:
       - "postgres"
       - "-c"
