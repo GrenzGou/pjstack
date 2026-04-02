@@ -1,10 +1,4 @@
-- name: Login to quay.io and create ${XDG_RUNTIME_DIR}/containers/auth.json
-  containers.podman.podman_login:
-    username: "{{registry_user}}"
-    password: "{{registry_pass}}"
-    registry: dwh-ap-southeast-3.cr.bytepluses.com
-    
-- name: Warpgate Environment
+  - name: Warpgate Environment
   hosts: manager
   become: true
   gather_facts: true
@@ -12,5 +6,10 @@
   vars:
     pod_name: 'healthcheck'
   tasks:
+    - name: Login to quay.io and create ${XDG_RUNTIME_DIR}/containers/auth.json
+      containers.podman.podman_login:
+        username: "{{registry_user}}"
+        password: "{{registry_pass}}"
+        registry: dwh-ap-southeast-3.cr.bytepluses.com
     - name: --Initialize-- Certificate
       ansible.builtin.include_tasks: "stack/security/healthcheck.yml"
