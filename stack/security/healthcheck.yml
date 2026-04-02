@@ -53,7 +53,7 @@
     volumes:
       - "{{local_path}}/healthcheck:/data:z"
     ports:
-      - "6661:8000"
+      - "16661:8000"
     network:
       - apjn
     shm_size: "1gb"
