@@ -61,7 +61,7 @@
       EMAIL_PORT: 587
       EMAIL_USE_TLS: True
       SECRET_KEY: "TralalaTrololo"
-      SITE_ROOT: http://dwh-manager:8000
+      SITE_ROOT: https://dwh-manager:8000
     volumes:
       - "{{local_path}}/healthcheck:/data:z"
     ports:
