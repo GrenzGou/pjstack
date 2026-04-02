@@ -4,33 +4,45 @@
     state: directory
   with_items:
     - { path: "{{local_path}}/ssl/postgres" }
-    - { path: "{{local_path}}/pg_clickhouse" }
-    - { path: "{{local_path}}/pg_clickhouse/config" }
-    - { path: "{{local_path}}/pg_clickhouse/files" }
-    - { path: "{{local_path}}/pg_clickhouse/data" }
-    - { path: "{{log_path}}/pg_clickhouse" }
     - { path: "{{local_path}}/pg_citus" }
     - { path: "{{local_path}}/pg_citus/config" }
     - { path: "{{local_path}}/pg_citus/files" }
     - { path: "{{local_path}}/pg_citus/data" }
     - { path: "{{log_path}}/pg_citus" }
 
-#- name: Copy file with owner and permissions
-#  become: true
-#  ansible.builtin.copy:
-#    src: "{{local_path}}/ssl/{{item.path}}"
-#    dest: "{{local_path}}/ssl/postgres/{{item.path}}"
-#    owner: "100998"
-#    mode: '0600'
-#    remote_src: yes
-#  with_items:
-#    - { path: "server-cert.pem" }
-#    - { path: "server-key.pem" }
+- name: Copy file with owner and permissions
+  become: true
+  ansible.builtin.copy:
+    src: "{{local_path}}/ssl/{{item.path}}"
+    dest: "{{local_path}}/ssl/postgres/{{item.path}}"
+    owner: "100998"
+    mode: '0600'
+    remote_src: yes
+  with_items:
+    - { path: "server-cert.pem" }
+    - { path: "server-key.pem" }
+
+- name: Create healthcheck via API
+  ansible.builtin.uri:
+    url: "https://{{host_dwh_manager}}/healthcheck/api/v3/checks/"
+    method: POST
+    headers:
+      Content-Type: application/json
+      X-Api-Key: "{{healthcheck_apikey}}"
+    body_format: json
+    body:
+      name: "postgres"
+      tags: "prod database"
+      timeout: 300
+      grace: 1800
+    ca_path: "{{local_path}}/ssl/ca-cert.pem"
+    status_code: 201
+  register: create_check
 
 - name: Run pg_citus container
   containers.podman.podman_container:
     name: pg_citus
-    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus_house:14
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/citus:14
     state: started
     restart_policy: always
     ports:
@@ -41,12 +53,10 @@
       - "{{local_path}}/pg_citus/data:/var/lib/postgresql:z"
       # - "{{local_path}}/postgres/config:/var/lib/postgresql/data:z"
       - "{{local_path}}/pg_citus/files:/files:z"
-      - "{{local_path}}/ssl/citus:/ssl:z"
+      - "{{local_path}}/ssl/postgres:/ssl:z"
     network: "{{podman_network}}"
     command:
       - "postgres"
-      - "-c"
-      - "wal_level=replica"
       - "-c"
       - "ssl=on"
       - "-c"
@@ -58,6 +68,6 @@
 
 - name: Create pg_clickhouse extension
   containers.podman.podman_container_exec:
-    name: pg_citus
+    name: pg_clickhouse
     command: >
       psql -U postgres -c "CREATE EXTENSION IF NOT EXISTS pg_clickhouse;"
