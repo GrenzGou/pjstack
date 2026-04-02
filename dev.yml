@@ -1,4 +1,4 @@
-  - name: Warpgate Environment
+- name: Warpgate Environment
   hosts: manager
   become: true
   gather_facts: true
