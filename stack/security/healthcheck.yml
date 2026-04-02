@@ -16,6 +16,7 @@
     state: started
     restart_policy: always
     env:
+      POSTGRES_DB: "healthcheck"
       POSTGRES_PASSWORD: "confidential"
     volumes:
       - "{{local_path}}/apps/pg:/var/lib/postgresql:z"
