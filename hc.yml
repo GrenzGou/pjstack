@@ -1,0 +1,14 @@
+- name: Warpgate Environment
+  hosts: manager
+  become: true
+  gather_facts: true
+  become_user: "{{ ansible_user }}"
+  vars:
+    pod_name: 'clickhouse'
+  tasks:
+
+    - name: --Initialize-- Certificate
+      ansible.builtin.include_tasks: "stack/security/caddy.yml"
+      
+    - name: --Initialize-- Certificate
+      ansible.builtin.include_tasks: "stack/security/healthcheck.yml"
