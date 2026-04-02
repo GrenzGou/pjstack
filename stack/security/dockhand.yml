@@ -1,0 +1,38 @@
+- name: Create Folder Caddy
+  become: true
+  ansible.builtin.file:
+    path: "{{item}}"
+    state: directory
+  #    owner: "{{ ansible_user }}"
+  with_items:
+    - "{{local_path}}/dockhand"
+
+
+- name: "--PODMAN-- USE Storage Encrypt"
+  copy:
+    dest: "{{local_path}}/caddy/Caddyfile_dockhand"
+    content: |
+      dwh-manager {
+          tls /ssl/server-cert.pem /ssl/server-key.pem
+
+          handle /dockhand* {
+              reverse_proxy dockhand:8000
+          }
+      }
+
+
+- name: Create Caddy container
+  containers.podman.podman_container:
+    name: dockhand
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/dockhand:1
+    state: started
+    restart_policy: unless-stopped
+    interactive: true
+    tty: true
+    recreate: true
+    volumes:
+      - "/run/user/1000/podman/podman.sock:/var/run/docker.sock:z"
+      - "{{local_path}}/dockhand:/app/data:z"
+    network:
+      - apjn
+    shm_size: "1gb"
