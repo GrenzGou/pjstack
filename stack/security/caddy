@@ -1,0 +1,26 @@
+- name: Create Folder Caddy
+  become: true
+  ansible.builtin.file:
+    path: "{{item}}"
+    state: directory
+  #    owner: "{{ ansible_user }}"
+  with_items:
+    - "{{local_path}}/caddy"
+    
+    
+- name: Create Caddy container
+  containers.podman.podman_container:
+    name: caddy
+    image: dwh-ap-southeast-3.cr.bytepluses.com/dw-app/caddy:2.11.2
+    state: started
+    restart_policy: unless-stopped
+    interactive: true
+    tty: true
+    recreate: true
+    volumes:
+      - "{{local_path}}/caddy:/etc/caddy:z"
+    ports:
+      - "443:443"
+    network:
+      - apjn
+    shm_size: "1gb"
