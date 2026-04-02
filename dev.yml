@@ -1,4 +1,4 @@
-- name: Clickhouse Environment
+- name: postgres Environment
   hosts: database_ods_clickhouse
   become: true
   gather_facts: true
@@ -7,5 +7,5 @@
     pod_name: 'clickhouse'
   tasks:
     - name: --Initialize-- Certificate
-      ansible.builtin.include_tasks: "stack/clickhouse/ds.yml"
+      ansible.builtin.include_tasks: "stack/clickhouse/postgres.yml"
 
