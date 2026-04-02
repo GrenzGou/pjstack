@@ -10,17 +10,17 @@
     - { path: "{{local_path}}/pg_citus/data" }
     - { path: "{{log_path}}/pg_citus" }
 
-- name: Copy file with owner and permissions
-  become: true
-  ansible.builtin.copy:
-    src: "{{local_path}}/ssl/{{item.path}}"
-    dest: "{{local_path}}/ssl/citus/{{item.path}}"
-    owner: "100069"
-    mode: '0600'
-    remote_src: yes
-  with_items:
-    - { path: "server-cert.pem" }
-    - { path: "server-key.pem" }
+# - name: Copy file with owner and permissions
+#   become: true
+#   ansible.builtin.copy:
+#     src: "{{local_path}}/ssl/{{item.path}}"
+#     dest: "{{local_path}}/ssl/citus/{{item.path}}"
+#     owner: "100069"
+#     mode: '0600'
+#     remote_src: yes
+#   with_items:
+#     - { path: "server-cert.pem" }
+#     - { path: "server-key.pem" }
 
 - name: Create healthcheck via API
   ansible.builtin.uri:
