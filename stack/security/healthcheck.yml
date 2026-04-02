@@ -49,7 +49,7 @@
         EMAIL_PORT: 587
         EMAIL_USE_TLS: True
         SECRET_KEY: "TralalaTrololo"
-        SITE_ROOT: http://localhost:8000
+        SITE_ROOT: http://69.5.11.188:8000
     volumes:
       - "{{local_path}}/healthcheck:/data:z"
     ports:
